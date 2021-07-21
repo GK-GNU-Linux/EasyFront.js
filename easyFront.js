@@ -1,10 +1,16 @@
 class EasyFront {
     constructor() {
         this.EFTempleteEngine = new EFTempleteEngine()
-        console.log("EasyFront[INFO]: EFTempleteEngine Ready")
     }
 }
 
+
+/**
+ * 名称 模板引擎
+ * 功能 渲染 block模板 并把内容进行替换
+ * @date 2021-07-21
+ * @returns {any}
+ */
 class EFTempleteEngine {
     constructor() {
         this.laodMask()
@@ -26,6 +32,8 @@ class EFTempleteEngine {
                 let div = document.getElementById("mask")
                 div.style.opacity = 0
                 div.style.visibility = 'hidden'
+                console.log("EasyFront[INFO]: EFTempleteEngine Ready。")
+                EasyFront.ValEngine = new ValEngine()
             }, 400)
         }
     }
@@ -97,6 +105,12 @@ class EFTempleteEngine {
 
 
 }
+/**
+ * 名称 请求工具箱
+ * 功能 获取页面内容
+ * @date 2021-07-21
+ * @returns {any}
+ */
 class httpUtils {
     EFajax(url, method = "GET", data = null) {
         let pro = new Promise(function(resolve, reject) {
@@ -115,4 +129,68 @@ class httpUtils {
         return pro
     }
 }
+
+class ValEngine {
+    constructor() {
+        this._data = {}
+        this.data = {}
+        this.modelValChangeCallBack = {}
+        this.createVar()
+        this.makeVarTemplete()
+    }
+    makeVarTemplete() {
+        let valInfo = EasyFront.EFTempleteEngine.readSkeleton('useVar')
+        this.valReplace(valInfo)
+    }
+    valReplace(valInfo) {
+        for (const dom of valInfo) {
+            let valName = dom.getAttribute("val")
+            dom.innerHTML = this._data[valName]
+            this.pushValChangeCallBack(valName, dom ,(dom, newVal)=>{
+                dom.innerHTML = newVal
+            })
+        }
+    }
+    createVar() {
+        let vals = this.getVarValues()
+        console.log(vals)
+        for (const item of vals) {
+            this.makeOneVal(item.name, item.value)
+        }
+    }
+    pushValChangeCallBack(valName, data, ev) {
+        if(this.modelValChangeCallBack[valName] == null) this.modelValChangeCallBack[valName] = []
+        this.modelValChangeCallBack[valName].push({ev, data})
+    }
+    makeOneVal(key, value) {
+        this._data[key] = value
+        Object.defineProperty(this.data, key, {
+            get() {
+                return EasyFront.ValEngine._data[key]
+            },
+            set(newValue) {
+                EasyFront.ValEngine._data[key] = newValue
+                console.log("EasyFront[INFO]: 检测到数据变化。")
+                if(EasyFront.ValEngine.modelValChangeCallBack[key] == null) EasyFront.ValEngine.modelValChangeCallBack[key] = []
+                EasyFront.ValEngine.modelValChangeCallBack[key].forEach(element => {
+                    console.log("EasyFront[INFO]: 更新节点:" + element.data)
+                    element.ev(element.data, newValue)
+                });
+            }
+        })
+    }
+    getVarValues() {
+        let skeleton = EasyFront.EFTempleteEngine.readSkeleton('var')
+        let values = []
+        for (const item of skeleton) {
+            let name = item.getAttribute('name')
+            let value = item.getAttribute('value')
+            values.push({name, value})
+        }
+        return values
+    }
+
+    
+}
+
 EasyFront = new EasyFront()
