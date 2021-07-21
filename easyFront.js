@@ -146,9 +146,9 @@ class ValEngine {
     valReplace(valInfo) {
         for (const dom of valInfo) {
             let valName = dom.getAttribute("val")
-            dom.innerHTML = this._data[valName]
+            dom.innerText = this._data[valName]
             this.pushValChangeCallBack(valName, dom ,(dom, newVal)=>{
-                dom.innerHTML = newVal
+                dom.innerText = newVal
             })
         }
     }
