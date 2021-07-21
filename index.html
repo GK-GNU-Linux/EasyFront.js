@@ -1,0 +1,26 @@
+<script defer src="./easyFront.js"></script>
+{{ extends ./templete/base-header.html }}
+
+<block ref="title">EasyFront.js-简单的前端框架</block>
+
+<block ref="header-title">EasyFront.js</block>
+
+<block ref="body">
+    <div class="intro">
+        <p>这是前端全新理念的框架。结合各大框架的优势开发的简单前端开发。</p>
+    </div>
+    <style>
+        .intro {
+            text-align: center;
+        }
+    </style>
+</block>
+
+<!-- 以下那种方式好，还没实现，只是讨论那种好 -->
+
+<!-- 方式1，定义多个var标签，每个var只能定义一个变量 -->
+<var name="list" value='[{"name": "黄鉴熙"}]'></var>
+<var name="other" value='lwc'></var>
+
+<!-- 方式2，定义一个var标签，只能有一个，所有变量都在这里定义 -->
+<var data='{"list": [{"name": "黄鉴熙"}], "other": "lwc"}'></var>
