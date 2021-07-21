@@ -1,6 +1,7 @@
 class EasyFront {
     constructor() {
         this.EFTempleteEngine = new EFTempleteEngine()
+        console.log("EasyFront[INFO]: EFTempleteEngine Ready")
     }
 }
 
@@ -40,16 +41,18 @@ class EFTempleteEngine {
             EasyFront.EFTempleteEngine.laodMask(false)
             return
         }
+        
         // 获取继承信息
         let htmlTempleteInfo = this.Matcher(text)
-
-        // 当继承信息超过一个抛出错误
-        if( htmlTempleteInfo == null || htmlTempleteInfo.length > 1 ) {
+        if(htmlTempleteInfo == undefined) {
             EasyFront.EFTempleteEngine.laodMask(false)
             return
         }
-        // 不是继承
-        if(htmlTempleteInfo[0].type != "extends") return
+        htmlTempleteInfo = htmlTempleteInfo.filter((e)=>{ return e.type == 'extends' })
+        if(htmlTempleteInfo.length < 1 ) {
+            EasyFront.EFTempleteEngine.laodMask(false)
+            return
+        }
         // 获取孩子页面的继承值
         let values = this.getChildTempleteValues()
         // 获取父亲的html内容
