@@ -9,15 +9,24 @@
     <div class="intro">
         <p>这是前端全新理念的框架。结合各大框架的优势开发的简单前端开发。</p>
         <p>这是<useVar val="title"></useVar>开发的。</p>
-        <useVar val="title"></useVar>
-        <useVar val="title"></useVar>
-        <useVar val="title"></useVar>
-        <useVar val="title"></useVar>
-        <useVar val="title"></useVar>
+        <div style="margin-bottom: 1rem;">
+            <useVar val="title"></useVar>
+            <useVar val="title"></useVar>
+            <useVar val="title"></useVar>
+            <useVar val="title"></useVar>
+            <useVar val="title"></useVar>
+        </div>
+        <div class="input-group mb-3" style="width:90%;max-width:300px;margin-bottom: 1rem;">
+            <span class="input-group-text" id="basic-addon1">试试双向绑定?</span>
+            <input val="title" type="text" class="form-control" placeholder="输入内容" aria-label="Username" aria-describedby="basic-addon1">
+        </div>
     </div>
     <style>
         .intro {
-            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
     </style>
     <var name="list" value='[{name: 黄鉴熙}]'></var>

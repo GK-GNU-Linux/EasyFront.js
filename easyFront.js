@@ -68,7 +68,7 @@ class EFTempleteEngine {
         // 分析填写区域
         let htmlTempletePre = this.Matcher(fatherHtml)
         let finalhtml = this.Htmlreplace(values, htmlTempletePre, fatherHtml)
-        document.body.innerHTML = `<div id="mask" style="position: fixed; width: 100%; height: 100%; background-color: white; top: 0px; left: 0px; transition: all 0.5s ease 0s;"></div>` + finalhtml
+        document.body.innerHTML = `<div id="mask" style="z-index:99999;position: fixed; width: 100%; height: 100%; background-color: white; top: 0px; left: 0px; transition: all 0.5s ease 0s;"></div>` + finalhtml
         this.makeChildHtml()
     }
     getChildTempleteValues() {
@@ -137,6 +137,7 @@ class ValEngine {
         this.modelValChangeCallBack = {}
         this.createVar()
         this.makeVarTemplete()
+        this.makeInputModel()
     }
     makeVarTemplete() {
         let valInfo = EasyFront.EFTempleteEngine.readSkeleton('useVar')
@@ -151,9 +152,27 @@ class ValEngine {
             })
         }
     }
+    makeInputModel() {
+        let inputInfo = EasyFront.EFTempleteEngine.readSkeleton('input')
+        this.InputModel(inputInfo)
+    }
+    InputModel(inputInfo) {
+        for (const dom of inputInfo) {
+            console.log(dom)
+            let valName = dom.getAttribute("val")
+            dom.value = this._data[valName]
+            // 修改操作压入栈
+            this.pushValChangeCallBack(valName, dom ,(dom, newVal)=>{
+                dom.value = newVal
+            })
+            // 内容改变修改变量
+            dom.oninput = () => {
+                this.data[valName] = dom.value
+            }
+        }
+    }
     createVar() {
         let vals = this.getVarValues()
-        console.log(vals)
         for (const item of vals) {
             this.makeOneVal(item.name, item.value)
         }
