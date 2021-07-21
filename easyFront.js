@@ -182,7 +182,11 @@ class ValEngine {
         this.modelValChangeCallBack[valName].push({ev, data})
     }
     makeOneVal(key, value) {
-        this._data[key] = value
+        try {
+            this._data[key] = (new Function("return " + value))()
+        } catch (error) {
+            this._data[key] = value
+        }
         Object.defineProperty(this.data, key, {
             get() {
                 return EasyFront.ValEngine._data[key]
