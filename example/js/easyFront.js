@@ -32,7 +32,7 @@ class EFTempleteEngine {
                 let div = document.getElementById("mask")
                 div.style.opacity = 0
                 div.style.visibility = 'hidden'
-                console.info("EasyFront[INFO]: EFTempleteEngine Ready。")
+                console.log("EasyFront[INFO]: EFTempleteEngine Ready。")
                 EasyFront.ValEngine = new ValEngine()
             }, 400)
         }
@@ -138,63 +138,17 @@ class ValEngine {
         this.createVar()
         this.makeVarTemplete()
         this.makeInputModel()
-        this.makeForTemplete()
-        EasyFront.httpEngine = new httpEngine()
     }
     makeVarTemplete() {
-        let valInfo = document.querySelectorAll("[e-data]")
+        let valInfo = EasyFront.EFTempleteEngine.readSkeleton('useVar')
         this.valReplace(valInfo)
     }
-
     valReplace(valInfo) {
         for (const dom of valInfo) {
-            let valName = dom.getAttribute("e-data")
-            let realValName = valName.split('.')[0]
-            realValName = realValName.split('[')[0]
-            dom.innerText = eval(`this._data.${valName}`)
-            this.pushValChangeCallBack(realValName, {dom, js: `this._data.${valName}`} ,(data, newVal)=>{
-                try {
-                    data.dom.innerText = eval(data.js)
-                } catch (error) {
-                    data.dom.innerText = ''
-                }
-            })
-        }
-    }
-    makeForTemplete() {
-        let forInfo = document.querySelectorAll("[e-for]")
-        this.ForTempleteReplace(forInfo)
-    }
-    ForTempleteReplace(forInfo) {
-        console.log(forInfo)
-        for (const dom of forInfo) {
-            let valName = dom.getAttribute("e-for")
-            let child = dom.children[0]
-            let index = 0
-            for (const item of this._data[valName]) {
-                item.index = index++
-                let new_child = child.cloneNode(true)
-                let vals = new_child.querySelectorAll("[e-for-data]")
-                for (const dom of vals) {
-                    let valName = dom.getAttribute("e-for-data")
-                    dom.innerText = eval(`${valName}`)
-                }
-                dom.appendChild(new_child)
-            }
-            dom.removeChild(child)
-            this.pushValChangeCallBack(valName, child ,(child, newVal)=>{
-                dom.innerHTML = ""
-                let index = 0
-                for (const item of this._data[valName]) {
-                    item.index = index++
-                    let new_child = child.cloneNode(true)
-                    let vals = new_child.querySelectorAll("[e-for-data]")
-                    for (const dom of vals) {
-                        let valName = dom.getAttribute("e-for-data")
-                        dom.innerText = eval(`${valName}`)
-                    }
-                    dom.appendChild(new_child)
-                }
+            let valName = dom.getAttribute("val")
+            dom.innerText = this._data[valName]
+            this.pushValChangeCallBack(valName, dom ,(dom, newVal)=>{
+                dom.innerText = newVal
             })
         }
     }
@@ -204,6 +158,7 @@ class ValEngine {
     }
     InputModel(inputInfo) {
         for (const dom of inputInfo) {
+            console.log(dom)
             let valName = dom.getAttribute("val")
             dom.value = this._data[valName]
             // 修改操作压入栈
@@ -238,10 +193,10 @@ class ValEngine {
             },
             set(newValue) {
                 EasyFront.ValEngine._data[key] = newValue
-                console.info("EasyFront[INFO]: 检测到数据变化。")
+                console.log("EasyFront[INFO]: 检测到数据变化。")
                 if(EasyFront.ValEngine.modelValChangeCallBack[key] == null) EasyFront.ValEngine.modelValChangeCallBack[key] = []
                 EasyFront.ValEngine.modelValChangeCallBack[key].forEach(element => {
-                    console.info("EasyFront[INFO]: 更新节点:" + element.data)
+                    console.log("EasyFront[INFO]: 更新节点:" + element.data)
                     element.ev(element.data, newValue)
                 });
             }
@@ -253,37 +208,12 @@ class ValEngine {
         for (const item of skeleton) {
             let name = item.getAttribute('name')
             let value = item.getAttribute('value')
-            let ref = item.getAttribute('ref')
             values.push({name, value})
         }
         return values
     }
 
     
-}
-class httpEngine {
-    constructor() {
-        this.makeRequest()
-    }
-    async makeRequest() {
-        let reqs = EasyFront.EFTempleteEngine.readSkeleton('request')
-        for (const req of reqs) {
-            console.log(req)
-            let url = req.getAttribute("e-url")
-            let method = req.getAttribute("e-method")
-            let data = req.getAttribute("e-req-data")
-            let model = req.getAttribute("e-model")
-            let callback = req.getAttribute("e-callback")
-            if(method == "GET" || method == "get") {
-                url = url + data
-            }
-            let res = await new httpUtils().EFajax(url, method, data)
-            res = JSON.parse(res)
-            let cb = new Function('res', "return " + callback)
-            let cbRes =cb(res)
-            EasyFront.ValEngine.data[model] = cbRes
-        }
-    }
 }
 
 EasyFront = new EasyFront()

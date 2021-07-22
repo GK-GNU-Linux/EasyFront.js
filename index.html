@@ -8,13 +8,35 @@
 <block ref="body">
     <div class="intro">
         <p>这是前端全新理念的框架。结合各大框架的优势开发的简单前端开发。</p>
-        <p>这是<useVar val="title"></useVar>开发的。</p>
+        <var name="title" value='lwc开发者'></var>
+        <p>这是<span e-data="title" ></span>开发的。</p>
         <div style="margin-bottom: 1rem;">
-            <useVar val="title"></useVar>
-            <useVar val="title"></useVar>
-            <useVar val="title"></useVar>
-            <useVar val="title"></useVar>
-            <useVar val="title"></useVar>
+            <var name="list" value='[]'></var>
+            <request
+                e-url="https://disk.xiaotao2333.top:344/api/diskFile/0/fileList/byPath/影音区/助眠/" 
+                e-method="GET" 
+                e-req-data="2021年1月份" 
+                e-model="list"
+                e-callback="res.data[1]"
+            ></request>
+        </div>
+        <div style="margin-bottom: 1rem;width: 90%;max-width: 600px;">
+            <table class="table">
+                <thead>
+                  <tr>
+                    <th scope="col">序号</th>
+                    <th scope="col">名称</th>
+                    <th scope="col">格式</th>
+                  </tr>
+                </thead>
+                <tbody e-for="list">
+                    <tr>
+                        <th e-for-data="item.index">loading</th>
+                        <td e-for-data="item.name">loading</td>
+                        <td e-for-data="item.suffix">loading</td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
         <div class="input-group mb-3" style="width:90%;max-width:300px;margin-bottom: 1rem;">
             <span class="input-group-text" id="basic-addon1">试试双向绑定?</span>
@@ -29,6 +51,4 @@
             align-items: center;
         }
     </style>
-    <var name="list" value='[{name: "黄鉴熙"}]'></var>
-    <var name="title" value='lwc开发者'></var>
 </block>

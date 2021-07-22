@@ -1,0 +1,30 @@
+{{ extends ./templete/base-footer.html }}
+
+<script defer src="./js/easyFront.js"></script>
+
+<block ref="body">
+    <p>这是我的好兄弟{{ title }}。</p>
+    <div class="aa">
+        {{ title }}
+    </div>
+    <div class="aa">
+        <div>
+            <div>
+                {{ title }}
+            </div>
+            <div>
+                {{ test }}
+            </div>
+        </div>
+    </div>
+    <div class="item">
+        
+    </div>
+    <var ref=".aa" name="title" value="小溪"></var>
+    <var name="title" value="小溪2"></var>
+    <var name="test" value="小溪3"></var>
+    <var name="title" value="小溪"></var>
+    <var name="title" value="小溪"></var>
+    <var name="title" value="小溪"></var>
+    <var name="title" value="小溪"></var>
+</block>
